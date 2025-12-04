@@ -1,0 +1,209 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String      @id @default(cuid())
+  name      String
+  phone     String
+  email     String      @unique
+  password  String
+  status    USER_STATUS @default(OFFLINE)
+  role      ROLE        @default(USER)
+  shipments Shipment[]
+
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  profile       Profile?
+  Notification  Notification[]
+  ChatSession   ChatSession[]
+  Message       Message[]
+  adminPairings AdminUserPairing[] @relation("AdminPairings")
+}
+
+model Address {
+  id         String  @id @default(cuid())
+  street     String?
+  city       String?
+  state      String?
+  postalCode String?
+  country    String?
+  profileId  String  @unique
+  Profile    Profile @relation(fields: [profileId], references: [id], onDelete: Cascade)
+}
+
+model Profile {
+  id      String  @id @default(cuid())
+  userId  String  @unique
+  company String?
+  bio     String?
+  User    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  Address   Address?
+}
+
+model Shipment {
+  id                String    @id @default(cuid())
+  trackingNumber    String    @unique
+  estimatedDelivery DateTime
+  deliveredAt       DateTime?
+  isPaid            Boolean   @default(false) // New field to track payment status
+
+  // Origin information
+  originAddress    String
+  originCity       String
+  originState      String
+  originPostalCode String
+  originCountry    String
+
+  // Destination information
+  destinationAddress    String
+  destinationCity       String
+  destinationState      String
+  destinationPostalCode String
+  destinationCountry    String
+
+  serviceType         String
+  specialInstructions String?
+
+  packages        Package[]
+  TrackingUpdates TrackingUpdate[]
+  recipient       Recipient        @relation(fields: [recipientId], references: [id], onDelete: Cascade)
+  recipientId     String
+  Sender          User?            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId          String
+
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  Notification Notification[]
+}
+
+model Package {
+  id            String    @id @default(cuid())
+  packageType   String
+  weight        Int
+  length        Int
+  width         Int
+  height        Int
+  declaredValue Int?
+  description   String
+  pieces        Int
+  dangerous     Boolean
+  insurance     Boolean
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  Shipment      Shipment? @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  shipmentId    String
+}
+
+model Recipient {
+  id        String     @id @default(cuid())
+  name      String
+  company   String?
+  email     String?
+  phone     String
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+  shipments Shipment[]
+}
+
+model TrackingUpdate {
+  id         String   @id @default(cuid())
+  shipmentId String
+  timestamp  DateTime @default(now())
+  location   String?
+  message    String
+  status     String? // Can match the shipment status or be more granular
+  shipment   Shipment @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+}
+
+model Notification {
+  id         String            @id @default(cuid())
+  message    String
+  type       NOTIFICATION_TYPE
+  read       Boolean           @default(false)
+  user       User              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId     String
+  shipment   Shipment          @relation(fields: [shipmentId], references: [id], onDelete: Cascade)
+  shipmentId String
+  createdAt  DateTime          @default(now())
+  updatedAt  DateTime          @updatedAt
+}
+
+model ChatSession {
+  id        String   @id @default(cuid())
+  // If the user is registered, link to their User record;
+  // otherwise, these can be set for an anonymous session.
+  userId    String?
+  name      String?
+  email     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  messages Message[]
+  pairing  AdminUserPairing?
+
+  user User? @relation(fields: [userId], references: [id])
+}
+
+model Message {
+  id            String   @id @default(cuid())
+  chatSessionId String
+  senderId      String? // Nullable for anonymous
+  senderName    String? // For anonymous users
+  content       String
+  role          ChatRole @default(USER)
+  createdAt     DateTime @default(now())
+  read          Boolean  @default(false)
+  readBy        String?
+
+  chatSession ChatSession @relation(fields: [chatSessionId], references: [id])
+  sender      User?       @relation(fields: [senderId], references: [id])
+}
+
+model AdminUserPairing {
+  id            String   @id @default(cuid())
+  chatSessionId String   @unique
+  adminId       String
+  active        Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updateAt      DateTime @updatedAt
+
+  chatSession ChatSession @relation(fields: [chatSessionId], references: [id])
+  admin       User        @relation("AdminPairings", fields: [adminId], references: [id])
+
+  @@unique([chatSessionId, adminId, active])
+}
+
+enum ChatRole {
+  USER
+  ADMIN
+  BOT
+}
+
+enum NOTIFICATION_TYPE {
+  DELIVERY_UPDATE
+  PAYMENT_REMINDER
+  SHIPMENT_CREATED
+  STATUS_CHANGE
+}
+
+enum ROLE {
+  USER
+  ADMIN
+  MANAGER
+}
+
+enum USER_STATUS {
+  ONLINE
+  AWAY
+  OFFLINE
+  ENDED
+}
