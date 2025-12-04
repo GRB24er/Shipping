@@ -182,7 +182,7 @@ export default function ServicesPage() {
           variants={staggerContainer}
           className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-24"
         >
-          {services.map((service, index) => (
+          {services.map((service) => (
             <motion.div key={service.title} variants={fadeInUp}>
               <Card className="group h-full bg-slate-800/30 border-slate-700/50 hover:border-blue-500/30 transition-all duration-300 hover:bg-slate-800/50 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-blue-600/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />

@@ -6,8 +6,6 @@ import {
   Mail,
   HelpCircle,
   Send,
-  MapPin,
-  Clock,
   CheckCircle,
   Headphones,
 } from "lucide-react";

@@ -5,23 +5,23 @@ import { auth } from "~/auth";
 import { format } from "date-fns";
 
 // Map database status to frontend status
-function mapStatus(trackingUpdates: { status: string | null }[]): "delivered" | "in-transit" | "processing" | "delayed" {
-  if (trackingUpdates.length === 0) return "processing";
+// Map database status to frontend status
+function mapStatus(trackingUpdates: { status: string | null }[]): "Delivered" | "In_transit" | "Proccessing" | "On_hold" {
+  if (trackingUpdates.length === 0) return "Proccessing";
   
   const lastUpdate = trackingUpdates[trackingUpdates.length - 1];
-  if (!lastUpdate.status) return "processing";
+  if (!lastUpdate.status) return "Proccessing";
   
   const lastStatus = lastUpdate.status.toLowerCase();
   
-  if (lastStatus === "delivered") return "delivered";
-  if (lastStatus === "in_transit" || lastStatus === "in-transit") return "in-transit";
-  if (lastStatus === "on_hold" || lastStatus === "failed") return "delayed";
-  if (lastStatus === "picked_up" || lastStatus === "departed" || lastStatus === "arrived") return "in-transit";
-  if (lastStatus === "information_received") return "processing";
+  if (lastStatus === "delivered") return "Delivered";
+  if (lastStatus === "in_transit" || lastStatus === "in-transit") return "In_transit";
+  if (lastStatus === "on_hold" || lastStatus === "failed") return "On_hold";
+  if (lastStatus === "picked_up" || lastStatus === "departed" || lastStatus === "arrived") return "In_transit";
+  if (lastStatus === "information_received") return "Proccessing";
   
-  return "processing";
+  return "Proccessing";
 }
-
 const ShipmentsPageWrapper = async () => {
   const session = await auth();
   if (!session?.user) {
