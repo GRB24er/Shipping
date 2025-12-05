@@ -89,7 +89,7 @@ export const Header = () => {
             <div className="flex items-center gap-8">
               <div className="flex items-center gap-2 text-slate-400 text-xs">
                 <MapPin className="w-3.5 h-3.5 text-blue-400" />
-                <span></span>
+                <span>17 Bluestem Rd, Ipswich IP3 9RR, United Kingdom</span>
               </div>
               <div className="w-px h-4 bg-slate-700" />
               <div className="flex items-center gap-2 text-slate-400 text-xs">
@@ -265,11 +265,11 @@ export const Header = () => {
                     <div className="space-y-3">
                       <div className="flex items-center gap-3 text-sm text-slate-400">
                         <MapPin className="w-4 h-4 text-blue-400" />
-                        <span></span>
+                        <span>17 Bluestem Rd, Ipswich IP3 9RR, United Kingdom</span>
                       </div>
                       <div className="flex items-center gap-3 text-sm text-slate-400">
                         <Mail className="w-4 h-4 text-blue-400" />
-                        <span>admin@asyncship.com</span>
+                        <span>admin@asyncship.org</span>
                       </div>
                       <div className="flex items-center gap-3 text-sm text-slate-400">
                         <Clock className="w-4 h-4 text-blue-400" />

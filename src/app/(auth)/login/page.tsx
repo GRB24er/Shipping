@@ -23,7 +23,7 @@ const LoginPage = async () => {
             <div className="mb-8">
               <Image
                 src="/images/logo.png"
-                alt="Amermax logistics Logo"
+                alt="Asyncship"
                 width={150}
                 height={50}
                 className="mb-6"
@@ -60,7 +60,7 @@ const LoginPage = async () => {
           </div>
 
           <div className="text-sm text-gray-300">
-            <p>&copy; 2025 Amermax logistics. All rights reserved.</p>
+            <p>&copy; 2025 Asyncship. All rights reserved.</p>
           </div>
         </MotionDiv>
 
