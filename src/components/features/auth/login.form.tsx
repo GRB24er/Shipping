@@ -19,7 +19,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { signIn } from "next-auth/react";
+import { getSession, signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
@@ -64,10 +64,16 @@ export const LoginForm = () => {
         return;
       }
 
-      // Optionally, display a success message
+      // Fetch the updated session to determine the user's role
+      const session = await getSession();
       toast.success("Successfully signed in!");
       router.refresh();
-      router.replace("/");
+
+      if (session?.user?.role === "ADMIN") {
+        router.replace("/dashboard");
+      } else {
+        router.replace("/");
+      }
     } catch (error: unknown) {
       console.error(error);
       toast.error("An unexpected error occurred.");
