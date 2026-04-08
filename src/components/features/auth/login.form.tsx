@@ -20,7 +20,6 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { getSession, signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 const loginSchema = z.object({
@@ -29,7 +28,6 @@ const loginSchema = z.object({
 });
 
 export const LoginForm = () => {
-  const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
 
   const form = useForm<z.infer<typeof loginSchema>>({
@@ -68,10 +66,11 @@ export const LoginForm = () => {
       const session = await getSession();
       toast.success("Successfully signed in!");
 
+      // Use full page navigation to ensure the server reads the new session cookie
       if (session?.user?.role === "ADMIN") {
-        router.replace("/dashboard");
+        window.location.replace("/dashboard");
       } else {
-        router.replace("/");
+        window.location.replace("/");
       }
     } catch (error: unknown) {
       console.error(error);
