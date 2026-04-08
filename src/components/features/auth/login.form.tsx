@@ -67,7 +67,6 @@ export const LoginForm = () => {
       // Fetch the updated session to determine the user's role
       const session = await getSession();
       toast.success("Successfully signed in!");
-      router.refresh();
 
       if (session?.user?.role === "ADMIN") {
         router.replace("/dashboard");
