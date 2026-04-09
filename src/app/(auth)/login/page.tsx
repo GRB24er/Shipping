@@ -8,12 +8,7 @@ import { LoginForm } from "@/components/features/auth/login.form";
 
 const LoginPage = async () => {
   const session = await auth();
-  if (session?.user) {
-    if (session.user.role === "ADMIN") {
-      redirect("/dashboard");
-    }
-    redirect("/");
-  }
+  if (session?.user) redirect("/");
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-50 p-4">
       <div className="w-full max-w-4xl grid md:grid-cols-2 bg-white rounded-xl shadow-lg overflow-hidden">
