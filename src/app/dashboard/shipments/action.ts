@@ -30,7 +30,7 @@ const updateTrackingStatusSchema = z.object({
 export async function updateTrackingStatus(formData: FormData) {
   const session = await auth();
   if (session?.user.role !== "ADMIN") {
-    return redirect("/login");
+    return redirect("/");
   }
 
   // Extract form values into an object

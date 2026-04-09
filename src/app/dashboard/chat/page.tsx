@@ -6,12 +6,8 @@ export default async function AdminPage() {
   const session = await auth();
 
   // Redirect if not logged in or not an admin
-  if (!session?.user) {
+  if (!session?.user || session.user.role !== "ADMIN") {
     redirect("/");
-  }
-
-  if (session.user.role !== "ADMIN") {
-    redirect("/unauthorized");
   }
 
   return <AdminDashboard />;

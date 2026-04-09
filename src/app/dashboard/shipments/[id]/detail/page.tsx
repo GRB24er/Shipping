@@ -14,7 +14,7 @@ export default async function ShipmentDetailPage({
 
   const session = await auth();
   if (session?.user.role !== "ADMIN") {
-    return redirect("/login");
+    return redirect("/");
   }
 
   // Fetch the shipment along with related data
