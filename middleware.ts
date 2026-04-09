@@ -1,35 +1,35 @@
 import { NextResponse } from "next/server";
-import { auth } from "~/auth";
+import { getToken } from "next-auth/jwt";
+import type { NextRequest } from "next/server";
 
 const protectedPaths = ["/profile", "/shipments/history"];
 
-export default auth((req) => {
+export async function middleware(req: NextRequest) {
+  const token = await getToken({ req });
   const { pathname } = req.nextUrl;
-  const isLoggedIn = !!req.auth;
-  const isAdmin = req.auth?.user?.role === "ADMIN";
 
   // Dashboard is admin-only
   if (pathname.startsWith("/dashboard")) {
-    if (!isLoggedIn) {
+    if (!token) {
       const loginUrl = new URL("/login", req.url);
       loginUrl.searchParams.set("callbackUrl", pathname);
       return NextResponse.redirect(loginUrl);
     }
-    if (!isAdmin) {
+    if (token.role !== "ADMIN") {
       return NextResponse.redirect(new URL("/", req.url));
     }
   }
 
   // Other protected paths require login
   const isProtected = protectedPaths.some((p) => pathname.startsWith(p));
-  if (isProtected && !isLoggedIn) {
+  if (isProtected && !token) {
     const loginUrl = new URL("/login", req.url);
     loginUrl.searchParams.set("callbackUrl", pathname);
     return NextResponse.redirect(loginUrl);
   }
 
   return NextResponse.next();
-});
+}
 
 export const config = {
   matcher: ["/dashboard/:path*", "/profile/:path*", "/shipments/history"],
