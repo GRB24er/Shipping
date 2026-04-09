@@ -5,7 +5,10 @@ import type { NextRequest } from "next/server";
 const protectedPaths = ["/profile", "/shipments/history"];
 
 export async function middleware(req: NextRequest) {
-  const token = await getToken({ req });
+  const token = await getToken({
+    req,
+    secret: process.env.AUTH_SECRET ?? process.env.NEXTAUTH_SECRET,
+  });
   const { pathname } = req.nextUrl;
 
   // Dashboard is admin-only
