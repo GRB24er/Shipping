@@ -11,19 +11,6 @@ export async function middleware(req: NextRequest) {
   });
   const { pathname } = req.nextUrl;
 
-  // Dashboard is admin-only
-  if (pathname.startsWith("/dashboard")) {
-    if (!token) {
-      const loginUrl = new URL("/login", req.url);
-      loginUrl.searchParams.set("callbackUrl", pathname);
-      return NextResponse.redirect(loginUrl);
-    }
-    if (token.role !== "ADMIN") {
-      return NextResponse.redirect(new URL("/", req.url));
-    }
-  }
-
-  // Other protected paths require login
   const isProtected = protectedPaths.some((p) => pathname.startsWith(p));
   if (isProtected && !token) {
     const loginUrl = new URL("/login", req.url);
@@ -35,5 +22,5 @@ export async function middleware(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/dashboard/:path*", "/profile/:path*", "/shipments/history"],
+  matcher: ["/profile/:path*", "/shipments/history"],
 };
