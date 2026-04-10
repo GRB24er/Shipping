@@ -19,7 +19,7 @@ import {
   FormLabel,
   FormMessage,
 } from "@/components/ui/form";
-import { getSession, signIn } from "next-auth/react";
+import { signIn } from "next-auth/react";
 import { toast } from "sonner";
 
 const loginSchema = z.object({
@@ -62,16 +62,8 @@ export const LoginForm = () => {
         return;
       }
 
-      // Fetch the updated session to determine the user's role
-      const session = await getSession();
       toast.success("Successfully signed in!");
-
-      // Use full page navigation to ensure the server reads the new session cookie
-      if (session?.user?.role === "ADMIN") {
-        window.location.replace("/dashboard");
-      } else {
-        window.location.replace("/");
-      }
+      window.location.href = "/dashboard";
     } catch (error: unknown) {
       console.error(error);
       toast.error("An unexpected error occurred.");
